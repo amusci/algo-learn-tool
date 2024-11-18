@@ -1,69 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './visualizer.css';
 
-export default class SortingVisualizer extends React.Component {
+const SortingVisualizer = () => {
+    const [array, setArray] = useState([]);
 
-    constructor(props) {
 
-        super(props);
-
-        this.state = {
-
-            array: [], // main array
-            
-
-        };
-
-    }
-
-    componentDidMount() {
-
-        // when component loads
-
-        this.resetArray();
-
-    }
-
-    resetArray() {
-
-        const array = []; 
-        for (let i = 0; i <150; i++) {
-
-            array.push(randomNumGen(5, 400));
-
+    const resetArray = () => {
+        const newArray = [];
+        for (let i = 0; i < 150; i++) {
+            newArray.push(randomNumGen(5, 400));
         }
+        setArray(newArray);
+    };
 
-        this.setState({array});
-
-    }
     
-    render() {
+    useEffect(() => {
+        resetArray();
+    }, []); 
 
-        const {array} = this.state;
-
-        return (
-
-            <div className="array-container">
-            
-            {array.map((value,idx) => (
-
-                <div 
+    return (
+        <div className="array-container">
+            {array.map((value, idx) => (
+                <div
                     className="array-bar"
                     key={idx}
-                    style={{height: `${value}px`}}></div>
-
+                    style={{ height: `${value}px` }}
+                ></div>
             ))}
-            
-            </div>
+            <button onClick={resetArray}>Generate New Array</button>
+        </div>
+        
+    );
+};
 
-        );
 
-    }
-    
-}
-
-function randomNumGen(min, max) {
-
+const randomNumGen = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
+};
 
-}
+export default SortingVisualizer;
