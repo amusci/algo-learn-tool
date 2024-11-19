@@ -54,6 +54,13 @@ const SortingVisualizer = () => {
                     ></div>
                 ))}
             </div>
+
+            <div className="desc-container">
+                {/*descriptions*/}
+                <div className="desc">
+
+                </div>
+            </div>
         </div>
     );
 };
