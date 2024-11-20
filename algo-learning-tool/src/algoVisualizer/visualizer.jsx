@@ -3,6 +3,7 @@ import './visualizer.css';
 
 const SortingVisualizer = () => {
     const [array, setArray] = useState([]);
+    const [sortedIndices, setSortedIndices] = useState([]);
 
 
     const resetArray = () => {
@@ -12,6 +13,7 @@ const SortingVisualizer = () => {
             newArray.push(randomNumGen(5, 400));
         }
         setArray(newArray);
+        setSortedIndices([]);
     };
 
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -29,7 +31,7 @@ const SortingVisualizer = () => {
         };
     
         const quickSort = async () => {
-            console.log('Quick Sort');
+            //console.log('Quick Sort');
             const arrayCopy = [...array];
             await quickSorter(arrayCopy, 0, arrayCopy.length - 1);
             setArray(arrayCopy);
@@ -42,6 +44,9 @@ const SortingVisualizer = () => {
                 const pivotIndex = await partition(arr, low, high);
                 await quickSorter(arr, low, pivotIndex - 1);
                 await quickSorter(arr, pivotIndex + 1, high);
+            } else if (low === high) {
+                // mark sorted
+                setSortedIndices(prev => [...prev, low]);
             }
         };
     
@@ -60,6 +65,8 @@ const SortingVisualizer = () => {
             [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
             setArray([...arr]);
             await sleep(5);
+
+            setSortedIndices(prev => [...prev, i + 1]);
     
             return i + 1;
         };
@@ -83,7 +90,7 @@ const SortingVisualizer = () => {
             <div className="array-container">
                 {array.map((value, idx) => (
                     <div
-                        className="array-bar"
+                        className={`array-bar ${sortedIndices.includes(idx) ? 'sorted' : ''}`}
                         key={idx}
                         style={{ height: `${value}px` }}
                     ></div>

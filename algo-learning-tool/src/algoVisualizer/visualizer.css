@@ -21,7 +21,11 @@
     display: inline-block;
     width: 5px;
     margin: 1px;
-    background-color: teal;
+    background-color: red;
+}
+
+.array-bar.sorted {
+    background-color: green;
 }
 
 .button-container {
