@@ -1,19 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './visualizer.css';
 
 const SortingVisualizer = () => {
     const [array, setArray] = useState([]);
     const [sortedIndices, setSortedIndices] = useState([]);
+    const cancelSortRef = useRef(false);
+    console.log(cancelSortRef);
 
 
     const resetArray = () => {
         // need to make this stop any sorting when ran
+        cancelSortRef.current = true;
         const newArray = [];
         for (let i = 0; i < 150; i++) {
             newArray.push(randomNumGen(5, 400));
         }
         setArray(newArray);
         setSortedIndices([]);
+        
+        setTimeout(() => { cancelSortRef.current = false;}, 0);
     };
 
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -32,41 +37,52 @@ const SortingVisualizer = () => {
     
         const quickSort = async () => {
             //console.log('Quick Sort');
+            if (cancelSortRef.current) return;
             const arrayCopy = [...array];
             await quickSorter(arrayCopy, 0, arrayCopy.length - 1);
-            setArray(arrayCopy);
+
+            if (!cancelSortRef.current) {
+                setArray(arrayCopy);
+            }
         };
 
 
     
         const quickSorter = async (arr, low, high) => {
-            if (low < high) {
+            if (cancelSortRef.current) return;
+            if (low < high && !cancelSortRef.current) {
                 const pivotIndex = await partition(arr, low, high);
                 await quickSorter(arr, low, pivotIndex - 1);
                 await quickSorter(arr, pivotIndex + 1, high);
-            } else if (low === high) {
+            } else if (low === high && !cancelSortRef.current) {
                 // mark sorted
                 setSortedIndices(prev => [...prev, low]);
             }
         };
     
         const partition = async (arr, low, high) => {
+            if (cancelSortRef.current) return;
             const pivot = arr[high];
             let i = low - 1;
     
             for (let j = low; j < high; j++) {
-                if (arr[j] < pivot) {
+                if (cancelSortRef.current) return;
+                if (arr[j] < pivot && !cancelSortRef.current) {
                     i++;
                     [arr[i], arr[j]] = [arr[j], arr[i]];
                     setArray([...arr]);
                     await sleep(5);
                 }
             }
+            if (cancelSortRef.current) return;
             [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
             setArray([...arr]);
             await sleep(5);
 
-            setSortedIndices(prev => [...prev, i + 1]);
+            if (!cancelSortRef.current) {
+                
+                setSortedIndices(prev => [...prev, i + 1]);
+            }
     
             return i + 1;
         };
