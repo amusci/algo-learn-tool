@@ -6,12 +6,15 @@ const SortingVisualizer = () => {
 
 
     const resetArray = () => {
+        // need to make this stop any sorting when ran
         const newArray = [];
         for (let i = 0; i < 150; i++) {
             newArray.push(randomNumGen(5, 400));
         }
         setArray(newArray);
     };
+
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
         
         const bubbleSort = () => {
@@ -25,8 +28,40 @@ const SortingVisualizer = () => {
             
         };
     
-        const quickSort = () => {
+        const quickSort = async () => {
             console.log('Quick Sort');
+            const arrayCopy = [...array];
+            await quickSorter(arrayCopy, 0, arrayCopy.length - 1);
+            setArray(arrayCopy);
+        };
+
+
+    
+        const quickSorter = async (arr, low, high) => {
+            if (low < high) {
+                const pivotIndex = await partition(arr, low, high);
+                await quickSorter(arr, low, pivotIndex - 1);
+                await quickSorter(arr, pivotIndex + 1, high);
+            }
+        };
+    
+        const partition = async (arr, low, high) => {
+            const pivot = arr[high];
+            let i = low - 1;
+    
+            for (let j = low; j < high; j++) {
+                if (arr[j] < pivot) {
+                    i++;
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                    setArray([...arr]);
+                    await sleep(5);
+                }
+            }
+            [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+            setArray([...arr]);
+            await sleep(5);
+    
+            return i + 1;
         };
 
     
